@@ -1,0 +1,560 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CineBeats - Movie Songs Store</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: #090914;
+    color: white;
+    overflow-x: hidden;
+}
+
+/* Animated background */
+body::before {
+    content: "";
+    position: fixed;
+    width: 400px;
+    height: 400px;
+    background: #7b2ff7;
+    filter: blur(180px);
+    opacity: .3;
+    top: -100px;
+    left: -100px;
+    z-index: -1;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    width: 400px;
+    height: 400px;
+    background: #00d4ff;
+    filter: blur(180px);
+    opacity: .2;
+    bottom: -100px;
+    right: -100px;
+    z-index: -1;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 22px 7%;
+    background: rgba(15,15,30,.8);
+    backdrop-filter: blur(15px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.logo {
+    font-size: 27px;
+    font-weight: 800;
+    color: #b66bff;
+}
+
+.logo span {
+    color: white;
+}
+
+nav a {
+    color: #bbb;
+    text-decoration: none;
+    margin: 0 15px;
+    transition: .3s;
+}
+
+nav a:hover {
+    color: #c084fc;
+}
+
+.hero {
+    padding: 85px 7%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 370px;
+}
+
+.hero h1 {
+    font-size: clamp(35px, 5vw, 60px);
+    line-height: 1.2;
+    animation: slideUp 1s ease;
+}
+
+.hero h1 span {
+    color: #bb77ff;
+}
+
+.hero p {
+    color: #aaa;
+    margin: 20px 0;
+}
+
+.hero button {
+    padding: 13px 30px;
+    border: none;
+    border-radius: 30px;
+    background: linear-gradient(45deg,#7928ca,#ff0080);
+    color: white;
+    cursor: pointer;
+    font-size: 15px;
+    transition: .3s;
+}
+
+.hero button:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 25px #a855f7;
+}
+
+.music-visual {
+    font-size: 150px;
+    animation: float 3s infinite ease-in-out;
+    filter: drop-shadow(0 0 25px #a855f7);
+}
+
+@keyframes float {
+    0%,100% {transform: translateY(0) rotate(-5deg);}
+    50% {transform: translateY(-25px) rotate(5deg);}
+}
+
+@keyframes slideUp {
+    from {opacity:0; transform:translateY(40px);}
+    to {opacity:1; transform:translateY(0);}
+}
+
+.container {
+    padding: 20px 7% 120px;
+}
+
+.section-title {
+    font-size: 27px;
+    margin-bottom: 25px;
+}
+
+.search-box {
+    width: 100%;
+    max-width: 500px;
+    padding: 14px 20px;
+    border-radius: 30px;
+    border: 1px solid #444;
+    outline: none;
+    background: #17172b;
+    color: white;
+    margin-bottom: 35px;
+}
+
+.categories {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 35px;
+}
+
+.categories button {
+    background: #202036;
+    color: white;
+    border: 1px solid #393954;
+    padding: 9px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.categories button:hover,
+.categories button.active {
+    background: #a855f7;
+}
+
+.song-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(210px,1fr));
+    gap: 25px;
+}
+
+.song-card {
+    background: #17172b;
+    padding: 13px;
+    border-radius: 18px;
+    transition: .4s;
+    animation: slideUp .7s ease;
+    position: relative;
+}
+
+.song-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 10px 35px #9b59b655;
+}
+
+.cover {
+    width: 100%;
+    height: 190px;
+    border-radius: 13px;
+    object-fit: cover;
+}
+
+.song-card h3 {
+    margin-top: 13px;
+    font-size: 17px;
+}
+
+.song-card p {
+    color: #999;
+    font-size: 13px;
+    margin: 5px 0 13px;
+}
+
+.card-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.play-btn {
+    background: #a855f7;
+    color: white;
+    border: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.play-btn:hover {
+    transform: scale(1.15);
+}
+
+.heart {
+    background: none;
+    color: white;
+    font-size: 23px;
+    border: none;
+    cursor: pointer;
+}
+
+.heart.liked {
+    color: #ff4c8b;
+}
+
+.player {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 15px 7%;
+    background: rgba(22,22,42,.95);
+    backdrop-filter: blur(15px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    border-top: 1px solid #38384f;
+    z-index: 20;
+}
+
+.player-info {
+    min-width: 0;
+}
+
+.player-info h4 {
+    font-size: 14px;
+}
+
+.player-info p {
+    color: #aaa;
+    font-size: 12px;
+}
+
+.controls button {
+    background: #a855f7;
+    border: none;
+    color: white;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 17px;
+}
+
+footer {
+    text-align: center;
+    padding: 30px;
+    color: #777;
+}
+
+@media(max-width:700px) {
+    nav {display:none;}
+    .hero {padding-top:55px;}
+    .music-visual {font-size:80px;}
+    .player {padding:12px 4%;}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">Cine<span>Beats</span> 🎧</div>
+    <nav>
+        <a href="#">Home</a>
+        <a href="#songs">Songs</a>
+        <a href="#favorites">Favorites</a>
+    </nav>
+</header>
+
+<section class="hero">
+    <div>
+        <h1>Your Movies.<br>Your <span>Music World.</span></h1>
+        <p>Discover and enjoy your favourite movie songs in one place.</p>
+        <button onclick="document.getElementById('songs').scrollIntoView({behavior:'smooth'})">
+            Explore Songs 🎵
+        </button>
+    </div>
+    <div class="music-visual">🎧</div>
+</section>
+
+<main class="container" id="songs">
+
+    <h2 class="section-title">Discover Music ✨</h2>
+
+    <input
+        type="text"
+        class="search-box"
+        id="search"
+        placeholder="🔍 Search songs or movies..."
+    >
+
+    <div class="categories">
+        <button class="active" onclick="filterSongs('All',this)">All</button>
+        <button onclick="filterSongs('Telugu',this)">Telugu</button>
+        <button onclick="filterSongs('Hindi',this)">Hindi</button>
+        <button onclick="filterSongs('Tamil',this)">Tamil</button>
+        <button onclick="filterSongs('Favorites',this)">❤️ Favorites</button>
+    </div>
+
+    <div class="song-grid" id="songGrid"></div>
+
+</main>
+
+<footer>
+    © 2026 CineBeats | Your Ultimate Movie Music Collection
+</footer>
+
+<div class="player">
+    <div class="player-info">
+        <h4 id="currentSong">Select a song 🎵</h4>
+        <p id="currentMovie">CineBeats Music Player</p>
+    </div>
+
+    <div class="controls">
+        <button onclick="togglePlay()" id="playControl">▶</button>
+    </div>
+
+    <audio id="audio"></audio>
+</div>
+
+<script>
+
+// Sample song collection.
+// Replace audio URLs with your own licensed MP3 files.
+
+const songs = [
+    {
+        name: "Samajavaragamana",
+        movie: "Ala Vaikunthapurramuloo",
+        language: "Telugu",
+        image: "https://placehold.co/400x400/602080/ffffff?text=AVPL",
+        audio: ""
+    },
+    {
+        name: "Butta Bomma",
+        movie: "Ala Vaikunthapurramuloo",
+        language: "Telugu",
+        image: "https://placehold.co/400x400/803060/ffffff?text=Butta+Bomma",
+        audio: ""
+    },
+    {
+        name: "Kesariya",
+        movie: "Brahmastra",
+        language: "Hindi",
+        image: "https://placehold.co/400x400/9b5420/ffffff?text=Brahmastra",
+        audio: ""
+    },
+    {
+        name: "Chaleya",
+        movie: "Jawan",
+        language: "Hindi",
+        image: "https://placehold.co/400x400/203060/ffffff?text=Jawan",
+        audio: ""
+    },
+    {
+        name: "Arabic Kuthu",
+        movie: "Beast",
+        language: "Tamil",
+        image: "https://placehold.co/400x400/306060/ffffff?text=Beast",
+        audio: ""
+    },
+    {
+        name: "Naa Ready",
+        movie: "Leo",
+        language: "Tamil",
+        image: "https://placehold.co/400x400/503030/ffffff?text=Leo",
+        audio: ""
+    }
+];
+
+let favorites = [];
+let currentFilter = "All";
+let currentIndex = -1;
+
+const audio = document.getElementById("audio");
+
+function displaySongs(list) {
+
+    const grid = document.getElementById("songGrid");
+    grid.innerHTML = "";
+
+    if(list.length === 0) {
+        grid.innerHTML = "<p>No songs found 🎵</p>";
+        return;
+    }
+
+    list.forEach(song => {
+
+        const index = songs.indexOf(song);
+
+        const card = document.createElement("div");
+        card.className = "song-card";
+
+        card.innerHTML = `
+            <img class="cover" src="${song.image}" alt="${song.movie}">
+            <h3>${song.name}</h3>
+            <p>${song.movie} • ${song.language}</p>
+
+            <div class="card-actions">
+                <button class="play-btn" onclick="playSong(${index})">▶</button>
+
+                <button class="heart ${favorites.includes(index) ? 'liked' : ''}"
+                    onclick="toggleFavorite(${index})">
+                    ♥
+                </button>
+            </div>
+        `;
+
+        grid.appendChild(card);
+    });
+}
+
+function playSong(index) {
+
+    const song = songs[index];
+
+    if(!song.audio) {
+        alert("Add a licensed MP3 audio URL to this song to play it!");
+        return;
+    }
+
+    currentIndex = index;
+
+    audio.src = song.audio;
+    audio.play();
+
+    document.getElementById("currentSong").textContent = song.name;
+    document.getElementById("currentMovie").textContent = song.movie;
+
+    document.getElementById("playControl").textContent = "❚❚";
+}
+
+function togglePlay() {
+
+    if(currentIndex === -1) {
+        alert("Please select a song first!");
+        return;
+    }
+
+    if(audio.paused) {
+        audio.play();
+        document.getElementById("playControl").textContent = "❚❚";
+    } else {
+        audio.pause();
+        document.getElementById("playControl").textContent = "▶";
+    }
+}
+
+function toggleFavorite(index) {
+
+    if(favorites.includes(index)) {
+        favorites = favorites.filter(i => i !== index);
+    } else {
+        favorites.push(index);
+    }
+
+    updateDisplay();
+}
+
+function filterSongs(category,button) {
+
+    currentFilter = category;
+
+    document.querySelectorAll(".categories button")
+        .forEach(btn => btn.classList.remove("active"));
+
+    button.classList.add("active");
+
+    updateDisplay();
+}
+
+function updateDisplay() {
+
+    let filtered = songs;
+
+    if(currentFilter === "Favorites") {
+        filtered = songs.filter((song,index) =>
+            favorites.includes(index)
+        );
+    }
+    else if(currentFilter !== "All") {
+        filtered = songs.filter(song =>
+            song.language === currentFilter
+        );
+    }
+
+    const search = document.getElementById("search")
+        .value.toLowerCase();
+
+    filtered = filtered.filter(song =>
+        song.name.toLowerCase().includes(search) ||
+        song.movie.toLowerCase().includes(search)
+    );
+
+    displaySongs(filtered);
+}
+
+document.getElementById("search")
+    .addEventListener("input",updateDisplay);
+
+audio.addEventListener("ended", () => {
+    document.getElementById("playControl").textContent = "▶";
+});
+
+displaySongs(songs);
+
+</script>
+
+</body>
+</html>
